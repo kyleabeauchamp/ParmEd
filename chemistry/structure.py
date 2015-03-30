@@ -1265,7 +1265,7 @@ class Structure(object):
             constrains is None
         """
         if constraints is None and not rigidWater: return
-        if constraints not in (None, app.HBonds, app.AllBonds, app.HAngles):
+        if constraints not in (None, app.HBonds, app.AllBonds, app.HAngles, "allangles"):
             raise ValueError("Unrecognized constraints option (%s)" %
                              constraints)
         length_conv = u.angstrom.conversion_factor_to(u.nanometer)
@@ -1286,10 +1286,10 @@ class Structure(object):
                     or bond.atom2.element == 1):
                 system.addConstraint(bond.atom1.idx, bond.atom2.idx,
                                      bond.type.req*length_conv)
-        if constraints is app.HAngles:
+        if constraints is app.HAngles or constraints is  "allangles":
             for angle in self.angles:
                 num_h = (angle.atom1.element == 1) + (angle.atom3.element == 1)
-                if num_h == 2 or (num_h == 1 and angle.atom2.element == 8):
+                if num_h == 2 or (num_h == 1 and angle.atom2.element == 8) or constraints is "allangles":
                     # Constrain this angle
                     l1 = l2 = None
                     for bond in angle.atom2.bonds:
